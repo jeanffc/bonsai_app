@@ -1,14 +1,39 @@
 import React, { Component } from "react";
-import { View, Text, Button } from 'react-native';
+import { View, Text, Button, ScrollView } from "react-native";
+
+import api from "../../services/api";
 
 export default class MovieList extends Component {
+  state = {
+    movies: []
+  };
+
+  async componentDidMount() {
+    try {
+      const response = await api.get("/movieTickets", {
+        params: {
+          skip: 0,
+          limit: 10
+        }
+      });
+
+      this.setState({ movies: response.data });
+
+      console.log(this.state.movies);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   render() {
     return (
       <View>
-        <Text>Movie List</Text>
+        <ScrollView>
+          {this.state.movies.map((movie, index) => <Text>{movie.title}</Text>)}
+        </ScrollView>
         <Button
           title="Go to Details"
-          onPress={() => this.props.navigation.navigate('MovieDetail')}
+          onPress={() => this.props.navigation.navigate("MovieDetail")}
         />
       </View>
     );

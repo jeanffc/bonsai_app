@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { View, Text, Button, ScrollView } from "react-native";
+import { View, Button } from "react-native";
+import { ScrollView, Container, MovieCard, Title, Genre, ImageContainer, Image } from "./styles";
 
 import api from "../../services/api";
 
@@ -28,13 +29,27 @@ export default class MovieList extends Component {
   render() {
     return (
       <View>
-        <ScrollView>
-          {this.state.movies.map((movie, index) => <Text>{movie.title}</Text>)}
-        </ScrollView>
-        <Button
+        <ScrollView
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+        >
+            <Container>
+                {this.state.movies.map((movie, index) => (
+                    <MovieCard key={movie._id.$oid} onPress={() => console.log("click")}>
+                        <ImageContainer>
+                            <Image source={{ uri: movie.image }} />
+                        </ImageContainer>
+                        <Title numberOfLines={1}>{movie.title}</Title>
+                        <Genre numberOfLines={1}>{movie.genre}</Genre>
+                    </MovieCard>
+                ))}   
+          </Container>
+          <Button
           title="Go to Details"
           onPress={() => this.props.navigation.navigate("MovieDetail")}
         />
+        </ScrollView>
+        
       </View>
     );
   }

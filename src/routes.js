@@ -1,6 +1,6 @@
 import { createStackNavigator, createAppContainer } from "react-navigation";
-import MovieList from "./pages/MovieList";
-import MovieDetail from "./pages/MovieDetail";
+import MovieList from "./screens/MovieList";
+import MovieDetail from "./screens/MovieDetail";
 
 const RootStack = createStackNavigator({
   MovieList: {

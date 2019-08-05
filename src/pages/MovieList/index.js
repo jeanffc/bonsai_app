@@ -33,17 +33,21 @@ export default class MovieList extends Component {
         }
       });
 
+      responseFiltered = response.data.filter(this.isMovieValid);
       this.setState({
-        movies: [...this.state.movies, ...response.data],
+        movies: [...this.state.movies, ...responseFiltered],
         skip: this.state.skip + this.state.limit,
         loading: false
       });
-
     } catch (err) {
       this.setState({ loading: false });
       console.log(err);
     }
   };
+
+  isMovieValid(movie) {
+    return movie && movie.title && movie.genre && movie.image ? true : false;
+  }
 
   renderItem = ({ item }) => (
     <MovieCard onPress={() => console.log("click")}>
@@ -71,10 +75,10 @@ export default class MovieList extends Component {
           data={this.state.movies}
           numColumns={3}
           // vertical
-        //   ListHeaderComponent={<View width={20} />}
+          //   ListHeaderComponent={<View width={20} />}
           renderItem={this.renderItem}
           keyExtractor={(item, index) => `${item._id.$oid}-${index}`}
-        //   showsHorizontalScrollIndicator={false}
+          //   showsHorizontalScrollIndicator={false}
           onEndReached={this.loadMovies}
           onEndReachedThreshold={0}
           ListFooterComponent={this.renderLoader}

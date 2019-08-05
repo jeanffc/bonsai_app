@@ -1,20 +1,29 @@
 import React, { Component } from "react";
 import { View, Button } from "react-native";
-import { ScrollView, Container, MovieCard, Title, Genre, ImageContainer, Image } from "./styles";
+import {
+  FlatList,
+  MovieCard,
+  Title,
+  Genre,
+  ImageContainer,
+  Image
+} from "./styles";
 
 import api from "../../services/api";
 
 export default class MovieList extends Component {
   state = {
-    movies: []
+    movies: [],
+    skip: 0,
+    limit: 12
   };
 
   async componentDidMount() {
     try {
       const response = await api.get("/movieTickets", {
         params: {
-          skip: 0,
-          limit: 10
+          skip: this.state.skip,
+          limit: this.state.limit
         }
       });
 
@@ -26,30 +35,33 @@ export default class MovieList extends Component {
     }
   }
 
+  renderItem = ({ item }) => (
+    <MovieCard onPress={() => console.log("click")}>
+      <ImageContainer>
+        <Image source={{ uri: item.image }} />
+      </ImageContainer>
+      <Title numberOfLines={1}>{item.title}</Title>
+      <Genre numberOfLines={1}>{item.genre}</Genre>
+    </MovieCard>
+  );
+
   render() {
     return (
       <View>
-        <ScrollView
-            showsHorizontalScrollIndicator={false}
-            showsVerticalScrollIndicator={false}
-        >
-            <Container>
-                {this.state.movies.map((movie, index) => (
-                    <MovieCard key={movie._id.$oid} onPress={() => console.log("click")}>
-                        <ImageContainer>
-                            <Image source={{ uri: movie.image }} />
-                        </ImageContainer>
-                        <Title numberOfLines={1}>{movie.title}</Title>
-                        <Genre numberOfLines={1}>{movie.genre}</Genre>
-                    </MovieCard>
-                ))}   
-          </Container>
-          <Button
+        <FlatList
+          data={this.state.movies}
+          numColumns={3}
+          // vertical
+          ListHeaderComponent={<View width={20} />}
+          renderItem={this.renderItem}
+          keyExtractor={(item, index) => `${item._id.$oid}`}
+          // showsHorizontalScrollIndicator={false}
+        />
+
+        <Button
           title="Go to Details"
           onPress={() => this.props.navigation.navigate("MovieDetail")}
         />
-        </ScrollView>
-        
       </View>
     );
   }

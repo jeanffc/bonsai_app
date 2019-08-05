@@ -9,15 +9,8 @@ const cols = 3, rows = 3;
 const heightCard = (height - 20 - 80) / rows - 10;
 const widthCard = (width - 20) / cols - 10;
 
-const ScrollView = styled.ScrollView`
-         
-`;
-
-const Container = styled.View`
-    flex: 1;                             
-    flexDirection: row;
-    flexWrap: wrap;
-    paddingTop: 20;
+const FlatList = styled.FlatList`
+    
 `;
 
 const MovieCard = styled.TouchableOpacity`
@@ -34,7 +27,7 @@ const ImageContainer = styled.View`
 const Image = styled.Image`
     borderRadius: 10;
     height: 160;
-    width: 112;
+    width: 100%;
 `;
 
 const Text = styled.Text`
@@ -50,4 +43,4 @@ const Genre = styled(Text)`
     fontSize: 12px;
 `;
 
-export { ScrollView, Container, MovieCard, Title, Genre, ImageContainer, Image };
+export { FlatList, MovieCard, Title, Genre, ImageContainer, Image };

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Button } from "react-native";
+import { View, Button, ActivityIndicator } from "react-native";
 import {
   FlatList,
   MovieCard,
@@ -15,11 +15,17 @@ export default class MovieList extends Component {
   state = {
     movies: [],
     skip: 0,
-    limit: 12
+    limit: 12,
+    loading: false
   };
 
   async componentDidMount() {
+    this.loadMovies();
+  }
+
+  loadMovies = async () => {
     try {
+      this.setState({ loading: true });
       const response = await api.get("/movieTickets", {
         params: {
           skip: this.state.skip,
@@ -27,13 +33,17 @@ export default class MovieList extends Component {
         }
       });
 
-      this.setState({ movies: response.data });
+      this.setState({
+        movies: [...this.state.movies, ...response.data],
+        skip: this.state.skip + this.state.limit,
+        loading: false
+      });
 
-      console.log(this.state.movies);
     } catch (err) {
+      this.setState({ loading: false });
       console.log(err);
     }
-  }
+  };
 
   renderItem = ({ item }) => (
     <MovieCard onPress={() => console.log("click")}>
@@ -45,6 +55,15 @@ export default class MovieList extends Component {
     </MovieCard>
   );
 
+  renderLoader = () => {
+    if (!this.state.loading) return null;
+    return (
+      <View>
+        <ActivityIndicator />
+      </View>
+    );
+  };
+
   render() {
     return (
       <View>
@@ -52,10 +71,13 @@ export default class MovieList extends Component {
           data={this.state.movies}
           numColumns={3}
           // vertical
-          ListHeaderComponent={<View width={20} />}
+        //   ListHeaderComponent={<View width={20} />}
           renderItem={this.renderItem}
-          keyExtractor={(item, index) => `${item._id.$oid}`}
-          // showsHorizontalScrollIndicator={false}
+          keyExtractor={(item, index) => `${item._id.$oid}-${index}`}
+        //   showsHorizontalScrollIndicator={false}
+          onEndReached={this.loadMovies}
+          onEndReachedThreshold={0}
+          ListFooterComponent={this.renderLoader}
         />
 
         <Button
